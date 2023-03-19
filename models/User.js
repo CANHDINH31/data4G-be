@@ -21,6 +21,12 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    listService: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Service",
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -2,7 +2,9 @@ import User from "../models/User.js";
 
 export const googleAuth = async (req, res, next) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ email: req.body.email }).populate(
+      "listService"
+    );
     if (user) {
       res.status(200).json({ ...user._doc, message: "Đăng nhập thành công" });
     } else {
