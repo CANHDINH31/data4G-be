@@ -8,6 +8,7 @@ import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import serviceRoutes from "./routes/service.js";
 import categoryRoutes from "./routes/category.js";
+import structreRoutes from "./routes/structre.js";
 
 const app = express();
 dotenv.config();
@@ -32,6 +33,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/service", serviceRoutes);
 app.use("/api/v1/category", categoryRoutes);
+app.use("/api/v1/structre", structreRoutes);
 
 app.use((err, req, res, next) => {
   const status = err.status || 500;
