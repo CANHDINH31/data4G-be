@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 
 export const getUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).populate("listService");
     res.status(200).json(user);
   } catch (error) {
     next(error);
@@ -31,13 +31,11 @@ export const updateInfo = async (req, res, next) => {
       },
       { new: true }
     );
-    res
-      .status(200)
-      .json({
-        message: "Cập nhật thành công",
-        status: 200,
-        ...updatedUser._doc,
-      });
+    res.status(200).json({
+      message: "Cập nhật thành công",
+      status: 200,
+      ...updatedUser._doc,
+    });
   } catch (error) {
     next(error);
   }
