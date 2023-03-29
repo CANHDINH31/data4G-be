@@ -10,6 +10,24 @@ export const getUser = async (req, res, next) => {
   }
 };
 
+export const searchUser = async (req, res, next) => {
+  const { query } = req.query;
+  try {
+    const users = await User.find({
+      $or: [
+        { email: { $regex: query, $options: "i" } },
+        { phone: { $regex: query, $options: "i" } },
+        { name: { $regex: query, $options: "i" } },
+      ],
+    })
+      .select("-password")
+      .populate("listService");
+    res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateInfo = async (req, res, next) => {
   let hash;
 
@@ -68,6 +86,19 @@ export const toggleFavourite = async (req, res, next) => {
         .status(200)
         .json({ message: "Service added to favourites", data: result });
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteUser = async (req, res, next) => {
+  const { listId } = req.body;
+
+  try {
+    await User.deleteMany({
+      _id: { $in: listId },
+    });
+    res.status(200).json({ message: "Xóa người dùng thành công" });
   } catch (error) {
     next(error);
   }
