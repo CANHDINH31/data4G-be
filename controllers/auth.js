@@ -27,24 +27,24 @@ export const register = async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email });
 
-    const isExistPhone = await User.findOne({ phone: req.body?.phone });
+    if (req.body.phone) {
+      const isExistPhone = await User.findOne({ phone: req.body?.phone });
 
-    if (isExistPhone)
-      res
-        .status(200)
-        .json({
+      if (isExistPhone)
+        return res.status(200).json({
           message: "Số điện thoại đã tồn tại, vui lòng chọn số điện thoại khác",
           status: 404,
         });
+    }
 
     if (user) {
-      res.status(200).json({ message: "Email đã tồn tại", status: 404 });
+      return res.status(200).json({ message: "Email đã tồn tại", status: 404 });
     } else {
       const salt = bcrypt.genSaltSync(10);
       const hash = bcrypt.hashSync(req.body.password, salt);
       const newUser = new User({ ...req.body, password: hash });
       await newUser.save();
-      res
+      return res
         .status(200)
         .json({ message: "Tạo tài khoản thành công", status: 200 });
     }

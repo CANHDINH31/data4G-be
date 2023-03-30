@@ -29,17 +29,29 @@ export const searchUser = async (req, res, next) => {
 };
 
 export const updateInfo = async (req, res, next) => {
+  const { password, ...newData } = req.body;
   let hash;
 
-  if (req.body?.password) {
+  if (password) {
     const salt = bcrypt.genSaltSync(10);
     hash = bcrypt.hashSync(req.body.password, salt);
   }
 
   const newPayLoads = {
-    ...req.body,
-    ...(req.body?.password && { password: hash }),
+    ...newData,
+    ...(hash && { password: hash }),
   };
+
+  const isExistPhone = await User.findOne({
+    phone: req.body?.phone,
+    _id: { $ne: req.params.id },
+  });
+
+  if (isExistPhone)
+    return res.status(200).json({
+      message: "Số điện thoại đã tồn tại, vui lòng chọn số điện thoại khác",
+      status: 404,
+    });
 
   try {
     const updatedUser = await User.findByIdAndUpdate(
@@ -49,7 +61,7 @@ export const updateInfo = async (req, res, next) => {
       },
       { new: true }
     );
-    res.status(200).json({
+    return res.status(200).json({
       message: "Cập nhật thành công",
       status: 200,
       ...updatedUser._doc,
